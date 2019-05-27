@@ -1,18 +1,20 @@
 require 'thread'
 
 class Puli
+  VERSION = '1.0.1'
+
   include Enumerable
-  
+
   def initialize(num_threads: 3, tasks: [])
     @num_threads = num_threads.to_i
     @q = Queue.new
     tasks.map{|t| @q << t }
   end
-  
+
   def <<(task)
     @q << task
   end
-  
+
   def each
     last_captured_error = false
     threads = (1..@num_threads.to_i).map do
