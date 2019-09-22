@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["me@julik.nl"]
   spec.summary       = %q{A corded thread pool for bursty threaded workloads}
   spec.description   = %q{For small concurrent activities in the open air}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = "https://github.com/julik/puli"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
