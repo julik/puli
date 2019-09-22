@@ -35,7 +35,32 @@ end
 # and will also raise TimeoutError up into the caller, regardless of whether
 # Thread.abort_on_exception is set to true.
 ```
- 
+
+# Execution order (`map` vs. `each`)
+
+Since `Puli#each` is presumed to generate side effects and should not slow down execution it yields immediately, so
+the order of execution is undefined:
+
+```ruby
+puli = Puli.new(num_threads: 4, tasks: 1..10.to_a)
+puli.each do |item| # Will yield numbers from 1 to 10 but in arbitrary order
+  fetch_item(item)
+end
+```
+
+However `Puli#map` can "hold" its return value until the ordering can be re-established, and will always return
+the tasks in order they were submitted or in the order the tasks were given in the `tasks:` keyword argument:
+
+
+```ruby
+puli = Puli.new(num_threads: 4, tasks: 1..10.to_a)
+fetched_items = puli.map do |i|
+   # Will run the block in arbitrary order among tasks, due to out-of-order execution
+  fetch_item(i)
+end
+fetched_items #=> [<Item 1>, <Item 2>, ...]_
+```
+
 ## Contributing to puli
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
