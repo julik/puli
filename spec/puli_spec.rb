@@ -41,6 +41,25 @@ describe 'Puli' do
     expect(sorted.length).to eq(20)
     expect(sorted[-1]).to eq(19 ** 2)
   end
+
+  it 'maps over the result in order, even when iteration is executed out of order' do
+    order_as_submitted = (1..64).to_a
+    p = Puli.new(num_threads: 4, tasks: order_as_submitted)
+    order_of_execution = p.map do |number|
+      sleep(rand / 14)
+      number
+    end
+    expect(order_of_execution).to eq(order_as_submitted)
+  end
+
+  it 'allows mapping over the result' do
+    p = Puli.new(num_threads: 4)
+    20.times {|i| p << i }
+    results = p.map{|task| task ** 2 }
+    sorted = results.sort
+    expect(sorted.length).to eq(20)
+    expect(sorted[-1]).to eq(19 ** 2)
+  end
   
   it 'supports the tasks[] kwarg' do
     p = Puli.new(num_threads: 4, tasks: (1..100))
