@@ -52,6 +52,18 @@ describe 'Puli' do
     expect(order_of_execution).to eq(order_as_submitted)
   end
 
+  it 'when mapping, only executes the workload once per task' do
+    order_as_submitted = (1..64).to_a
+    mux = Mutex.new
+    p = Puli.new(num_threads: 4, tasks: order_as_submitted)
+    execution_counter = 0
+    order_of_execution = p.map do |number|
+      sleep(rand / 14)
+      mux.synchronize { execution_counter += 1 }
+    end
+    expect(execution_counter).to eq(order_as_submitted.length)
+  end
+
   it 'allows mapping over the result' do
     p = Puli.new(num_threads: 4)
     20.times {|i| p << i }

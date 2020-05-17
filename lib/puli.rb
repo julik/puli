@@ -1,7 +1,7 @@
 require 'thread'
 
 class Puli
-  VERSION = '1.0.2'
+  VERSION = '1.0.3'
 
   Task = Struct.new(:payload, :index)
 
@@ -23,8 +23,8 @@ class Puli
     in_execution_order = []
     mux = Mutex.new
     each do |*payload, index:|
-      result = yield(*payload)
-      mux.synchronize { in_execution_order << Task.new(yield(*payload), index) }
+      task_result = yield(*payload)
+      mux.synchronize { in_execution_order << Task.new(task_result, index) }
     end
     in_execution_order.sort_by(&:index).map(&:payload)
   end
